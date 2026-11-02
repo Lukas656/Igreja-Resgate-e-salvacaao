@@ -31,7 +31,7 @@ type MinistryConfig = {
   }>;
   youtube: {
     channelId: string;
-    playlists: { sermons: string; services: string; events: string };
+    playlists: { sermons: string; services: string; events: string; worship: string };
   };
 };
 
@@ -85,7 +85,7 @@ export const ministryConfig: MinistryConfig = {
   ],
   youtube: {
     channelId: "UCOdAqwVy0cqNU7mmL4O-Ybg",
-    playlists: { sermons: "", services: "PLtxhs7GCODCb1bP8VYrlEMu2jG8nz9QmT", events: "" },
+    playlists: { sermons: "", services: "", events: "", worship: "" },
   },
 };
 

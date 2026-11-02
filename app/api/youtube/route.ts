@@ -8,6 +8,7 @@ const categoryPlaylists: Record<Exclude<VideoCategory, "all">, string | undefine
   sermons: process.env.YOUTUBE_PLAYLIST_SERMONS || ministryConfig.youtube.playlists.sermons,
   services: process.env.YOUTUBE_PLAYLIST_SERVICES || ministryConfig.youtube.playlists.services,
   events: process.env.YOUTUBE_PLAYLIST_EVENTS || ministryConfig.youtube.playlists.events,
+  worship: process.env.YOUTUBE_PLAYLIST_WORSHIP || ministryConfig.youtube.playlists.worship,
 };
 
 type YouTubeResponse = {

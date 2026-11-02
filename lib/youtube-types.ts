@@ -1,4 +1,4 @@
-export type VideoCategory = "all" | "sermons" | "services" | "events";
+export type VideoCategory = "all" | "sermons" | "services" | "events" | "worship";
 
 export type MinistryVideo = {
   id: string;

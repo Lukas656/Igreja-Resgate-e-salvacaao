@@ -10,6 +10,7 @@ const categories: { value: VideoCategory; label: string }[] = [
   { value: "sermons", label: "Pregações" },
   { value: "services", label: "Cultos" },
   { value: "events", label: "Eventos" },
+  { value: "worship", label: "lofi-worship" },
 ];
 
 const emptyMessages: Record<NonNullable<VideoPageResponse["error"]>, string> = {

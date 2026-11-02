@@ -20,11 +20,10 @@ export function Hero() {
       <div className="hero-orbit" aria-hidden="true" />
       <div className="hero-content">
         <div className="hero-copy">
-          <p className="eyebrow hero-kicker">Ministério Resgate &amp; Salvação</p>
+          <p className="eyebrow hero-kicker">Bem Vindo!</p>
           <h1 id="hero-title">
-            Um lugar de <span>fé,</span><br />
-            <span>esperança</span> e<br />
-            <span>transformação.</span>
+            Resgate<span>&</span><br />
+            Salvação<span>.</span>
           </h1>
           <p className="hero-description">
             Conheça o Ministério Resgate &amp; Salvação. Uma igreja comprometida em anunciar o Evangelho de Jesus Cristo e transformar vidas através da Palavra de Deus.

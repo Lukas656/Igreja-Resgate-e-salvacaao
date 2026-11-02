@@ -40,7 +40,6 @@ export function Worship() {
               )}
             </div>
           </article>
-
           <aside className="worship-verse" aria-label="Versículo de 1 Samuel 7:12">
             <Sparkles className="verse-symbol" size={22} aria-hidden="true" />
             <blockquote>“{service.verse}”</blockquote>
