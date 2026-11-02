@@ -21,7 +21,7 @@ const emptyMessages: Record<NonNullable<VideoPageResponse["error"]>, string> = {
 };
 
 export function VideoLibrary() {
-  const [category, setCategory] = useState<VideoCategory>("services");
+  const [category, setCategory] = useState<VideoCategory>("all");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
   const [videos, setVideos] = useState<MinistryVideo[]>([]);
   const [selected, setSelected] = useState<MinistryVideo | null>(null);

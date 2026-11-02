@@ -4,11 +4,22 @@ import type { MinistryVideo, VideoCategory } from "@/lib/youtube-types";
 
 const API_ROOT = "https://www.googleapis.com/youtube/v3";
 const PAGE_SIZE = 9;
-const categoryPlaylists: Record<Exclude<VideoCategory, "all">, string | undefined> = {
-  sermons: process.env.YOUTUBE_PLAYLIST_SERMONS || ministryConfig.youtube.playlists.sermons,
-  services: process.env.YOUTUBE_PLAYLIST_SERVICES || ministryConfig.youtube.playlists.services,
-  events: process.env.YOUTUBE_PLAYLIST_EVENTS || ministryConfig.youtube.playlists.events,
-  worship: process.env.YOUTUBE_PLAYLIST_WORSHIP || ministryConfig.youtube.playlists.worship,
+const categoryPlaylists: Record<
+  Exclude<VideoCategory, "all">,
+  string | undefined
+> = {
+  sermons:
+    process.env.YOUTUBE_PLAYLIST_SERMONS ||
+    ministryConfig.youtube.playlists.sermons,
+  services:
+    process.env.YOUTUBE_PLAYLIST_SERVICES ||
+    ministryConfig.youtube.playlists.services,
+  events:
+    process.env.YOUTUBE_PLAYLIST_EVENTS ||
+    ministryConfig.youtube.playlists.events,
+  worship:
+    process.env.YOUTUBE_PLAYLIST_WORSHIP ||
+    ministryConfig.youtube.playlists.worship,
 };
 
 type YouTubeResponse = {
@@ -21,12 +32,19 @@ type YouTubeResponse = {
       thumbnails?: Record<string, { url?: string }>;
       resourceId?: { videoId?: string };
     };
-    contentDetails?: { videoId?: string; relatedPlaylists?: { uploads?: string } };
+    contentDetails?: {
+      videoId?: string;
+      relatedPlaylists?: { uploads?: string };
+    };
   }>;
 };
 
 function resultError(
-  error: "not_configured" | "configuration_missing" | "upstream_error" | "invalid_request",
+  error:
+    | "not_configured"
+    | "configuration_missing"
+    | "upstream_error"
+    | "invalid_request",
   status: number,
 ) {
   return NextResponse.json(
@@ -35,15 +53,20 @@ function resultError(
   );
 }
 
-async function youtubeGet(path: string, params: Record<string, string>): Promise<YouTubeResponse> {
+async function youtubeGet(
+  path: string,
+  params: Record<string, string>,
+): Promise<YouTubeResponse> {
   const url = new URL(`${API_ROOT}/${path}`);
-  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+  for (const [key, value] of Object.entries(params))
+    url.searchParams.set(key, value);
   url.searchParams.set("key", process.env.YOUTUBE_API_KEY ?? "");
 
   const response = await fetch(url, {
     next: { revalidate: 300 },
   });
-  if (!response.ok) throw new Error("YouTube API returned a non-success response");
+  if (!response.ok)
+    throw new Error("YouTube API returned a non-success response");
   return (await response.json()) as YouTubeResponse;
 }
 
@@ -85,11 +108,21 @@ function validId(value: string | undefined): value is string {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const rawCategory = searchParams.get("category") ?? "all";
-  const allowed: VideoCategory[] = ["all", "sermons", "services", "events"];
-  if (!allowed.includes(rawCategory as VideoCategory)) return resultError("invalid_request", 400);
+  const allowed: VideoCategory[] = [
+    "all",
+    "sermons",
+    "services",
+    "events",
+    "worship",
+  ];
+  if (!allowed.includes(rawCategory as VideoCategory))
+    return resultError("invalid_request", 400);
   const category = rawCategory as VideoCategory;
   const pageToken = searchParams.get("pageToken") ?? "";
-  if (pageToken && (pageToken.length > 1024 || !/^[A-Za-z0-9_=-]+$/.test(pageToken))) {
+  if (
+    pageToken &&
+    (pageToken.length > 1024 || !/^[A-Za-z0-9_=-]+$/.test(pageToken))
+  ) {
     return resultError("invalid_request", 400);
   }
 
@@ -101,10 +134,15 @@ export async function GET(request: NextRequest) {
     let videoCategory: MinistryVideo["category"] = "channel";
 
     if (category === "all") {
-      const channelId = process.env.YOUTUBE_CHANNEL_ID || ministryConfig.youtube.channelId;
+      const channelId =
+        process.env.YOUTUBE_CHANNEL_ID || ministryConfig.youtube.channelId;
       if (!validId(channelId)) return resultError("configuration_missing", 422);
-      const channel = await youtubeGet("channels", { part: "contentDetails", id: channelId });
-      playlistId = channel.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
+      const channel = await youtubeGet("channels", {
+        part: "contentDetails",
+        id: channelId,
+      });
+      playlistId =
+        channel.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     } else {
       playlistId = categoryPlaylists[category];
       videoCategory = category;
@@ -125,7 +163,8 @@ export async function GET(request: NextRequest) {
       { items, nextPageToken: response.nextPageToken ?? null },
       {
         headers: {
-          "Cache-Control": "public, max-age=0, s-maxage=300, stale-while-revalidate=600",
+          "Cache-Control":
+            "public, max-age=0, s-maxage=300, stale-while-revalidate=600",
         },
       },
     );
