@@ -172,6 +172,24 @@ button { font: inherit; }
 .worship-verse blockquote { margin: 2.1rem 0 .55rem; font-family: var(--font-display); font-size: clamp(1.8rem, 3.2vw, 2.7rem); line-height: 1.12; }
 .worship-verse cite { color: #91dfff; font-size: .69rem; font-style: normal; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 
+/* Cards dinâmicos da agenda: variações temáticas preservam a paleta noturna do site. */
+.worship-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); align-items: stretch; }
+.worship-card { --event-accent: #19b9ff; --event-tint: rgba(8,123,250,.13); }
+.worship-card--gold { --event-accent: #ff0000; --event-tint: rgba(199, 25, 25, 0.15); background: linear-gradient(140deg, rgba(75, 25, 25, 0.52), rgba(7,24,57,.8)); }
+.worship-card--violet { --event-accent: #c2a1ff; --event-tint: rgba(132,80,219,.16); background: linear-gradient(140deg, rgba(57,37,91,.55), rgba(7,24,57,.8)); }
+.worship-card--teal { --event-accent: #72e4d1; --event-tint: rgba(28,153,135,.15); background: linear-gradient(140deg, rgba(20,68,74,.55), rgba(7,24,57,.8)); }
+.worship-card--rose { --event-accent: #ff9ab4; --event-tint: rgba(198,68,109,.15); background: linear-gradient(140deg, rgba(83,39,64,.52), rgba(7,24,57,.8)); }
+.worship-card .worship-icon { color: var(--event-accent); border-color: color-mix(in srgb, var(--event-accent), transparent 62%); background: var(--event-tint); }
+.worship-card .service-badge { border-color: color-mix(in srgb, var(--event-accent), transparent 70%); color: var(--event-accent); }
+.worship-kind { display: block; margin-top: 1rem; color: var(--event-accent); font-size: .63rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.worship-card h3 { margin-top: .35rem; }
+.worship-description { margin: .2rem 0 .85rem; color: #a4b5d0; font-size: .75rem; line-height: 1.65; }
+.worship-countdown { display: grid; gap: .16rem; margin-top: 1rem; padding: .75rem .9rem; border: 1px solid color-mix(in srgb, var(--event-accent, #19b9ff), transparent 78%); border-radius: 14px; background: var(--event-tint, rgba(8,123,250,.13)); }
+.countdown-label { color: var(--event-accent, #83dcff); font-size: .59rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.countdown-date { color: #f2f8ff; font-size: .88rem; }
+.countdown-timer { color: #b8c8df; font-size: .7rem; font-variant-numeric: tabular-nums; }
+.worship-empty { grid-column: 1 / -1; color: #aebbd2; }
+
 /* Vídeos */
 .video-section { position: relative; background: radial-gradient(ellipse at 12% 75%, rgba(8,57,125,.18), transparent 36%), #061638; }
 .video-header { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 2rem; }

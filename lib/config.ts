@@ -1,3 +1,5 @@
+import type { WorshipColor, WorshipKind, WorshipSchedule } from "@/lib/worship-schedule";
+
 export type SocialNetwork = {
   name: string;
   description: string;
@@ -22,12 +24,20 @@ type MinistryConfig = {
     mapsUrl: string;
     mapsEmbedUrl: string;
   };
+  worshipTimeZone: string;
+  worshipVerse: { text: string; reference: string };
   worshipServices: Array<{
+    id: string;
     name: string;
+    kind: WorshipKind;
+    description: string;
+    badge: string;
     time: string;
-    note: string;
-    verse: string;
-    reference: string;
+    durationMinutes: number;
+    color: WorshipColor;
+    schedule: WorshipSchedule;
+    location?: string;
+    mapsUrl?: string;
   }>;
   youtube: {
     channelId: string;
@@ -74,14 +84,52 @@ export const ministryConfig: MinistryConfig = {
     mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
     mapsEmbedUrl: "https://www.google.com/maps?q=-23.55307534877826%2C-46.40007463177939&z=16&output=embed",
   },
+  worshipTimeZone: "America/Sao_Paulo",
+  worshipVerse: {
+    text: "Ebenézer — Até aqui nos ajudou o Senhor.",
+    reference: "1 Samuel 7:12",
+  },
   worshipServices: [
-    {
-      name: "Culto de Domingo",
+     {
+      id: "culto-domingo",
+      name: "Domingo",
+      kind: "culto",
+      description: "Um tempo de louvor, Palavra e comunhão para toda a família.",
+      badge: "Toda semana",
       time: "09:00",
-      note: "Encontro semanal",
-      verse: "Ebenézer — Até aqui nos ajudou o Senhor.",
-      reference: "1 Samuel 7:12",
+      durationMinutes: 120,
+      color: "blue",
+      schedule: { type: "weekly", weekdays: ["sunday"] },
+      skipWhenSameDayAs: ["culto-ceia"],
+      location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
+      mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
     },
+    {
+      id: "culto-ceia",
+      name: "Santa Ceia",
+      kind: "culto",
+      description: "Celebração da Ceia do Senhor e comunhão da igreja.",
+      badge: "2º domingo do mês",
+      time: "09:00",
+      durationMinutes: 120,
+      color: "gold",
+      schedule: { type: "monthlyNthWeekday", weekday: "sunday", nth: 2 },
+      location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
+      mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
+    },
+     {
+      id: "culto-missoes-2026-11-14",
+      name: "Missões",
+      kind: "evento",
+      description: "Uma noite dedicada à obra missionária e ao anúncio do Evangelho.",
+      badge: "Culto especial · 14/11",
+      time: "18:00",
+      durationMinutes: 120,
+      color: "teal",
+      schedule: { type: "once", date: "2026-11-14" },
+      location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
+      mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
+    },,
   ],
   youtube: {
     channelId: "UCOdAqwVy0cqNU7mmL4O-Ybg",
