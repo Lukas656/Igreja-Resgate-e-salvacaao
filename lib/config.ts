@@ -100,7 +100,6 @@ export const ministryConfig: MinistryConfig = {
       durationMinutes: 120,
       color: "blue",
       schedule: { type: "weekly", weekdays: ["sunday"] },
-      skipWhenSameDayAs: ["culto-ceia"],
       location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
       mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
     },
@@ -129,7 +128,7 @@ export const ministryConfig: MinistryConfig = {
       schedule: { type: "once", date: "2026-11-14" },
       location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
       mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
-    },,
+    },
   ],
   youtube: {
     channelId: "UCOdAqwVy0cqNU7mmL4O-Ybg",
