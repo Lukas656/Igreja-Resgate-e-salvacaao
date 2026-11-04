@@ -35,9 +35,9 @@ export function Worship() {
                     timeZone={ministryConfig.worshipTimeZone}
                     durationMinutes={service.durationMinutes}
                     skipIfSameDayAs={(service.skipWhenSameDayAs ?? [])
-                      .map((relatedId) => ministryConfig.worshipServices.find((item) => item.id === relatedId))
-                      .filter((item) => item !== undefined)
-                      .map((item) => ({
+                      .map((relatedId:any) => ministryConfig.worshipServices.find((item) => item.id === relatedId))
+                      .filter((item:any) => item !== undefined)
+                      .map((item:any) => ({
                         schedule: item.schedule,
                         time: item.time,
                         durationMinutes: item.durationMinutes,
