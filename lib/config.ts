@@ -38,6 +38,7 @@ type MinistryConfig = {
     schedule: WorshipSchedule;
     location?: string;
     mapsUrl?: string;
+    skipWhenSameDayAs?: any;
   }>;
   youtube: {
     channelId: string;
@@ -100,6 +101,7 @@ export const ministryConfig: MinistryConfig = {
       durationMinutes: 120,
       color: "blue",
       schedule: { type: "weekly", weekdays: ["sunday"] },
+      skipWhenSameDayAs: ["culto-ceia"],
       location:  "Resgate & salvação - Feliciano de mendonça 251, JD Soares",
       mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=-23.55307534877826%2C-46.40007463177939",
     },
