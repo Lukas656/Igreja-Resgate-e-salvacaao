@@ -38,7 +38,8 @@ function readSecret(prompt) {
 
 const uri = process.env.MONGODB_URI;
 const email = normalizeEmail(process.env.ADMIN_EMAIL);
-const databaseName = process.env.MONGODB_DB_NAME?.trim();
+const adminDatabaseName = process.env.ADMIN_DB_NAME?.trim() || "auth";
+const usersCollectionName = process.env.ADMIN_USERS_COLLECTION?.trim() || "auth";
 
 if (!uri || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
   console.error("Configure MONGODB_URI e ADMIN_EMAIL no ambiente local antes de continuar.");
@@ -55,13 +56,13 @@ try {
 
   client = new MongoClient(uri, { serverSelectionTimeoutMS: 8000 });
   await client.connect();
-  const db = client.db(databaseName || undefined);
-  const admins = db.collection("admin_users");
+  const db = client.db(adminDatabaseName);
+  const admins = db.collection(usersCollectionName);
   try {
     await admins.createIndex({ email: 1 }, { unique: true });
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === 11000) {
-      throw new Error("A coleção admin_users contém e-mails duplicados. Corrija-os no Compass antes do seed.");
+      throw new Error(`A coleção ${usersCollectionName} contém e-mails duplicados. Corrija-os no Compass antes do seed.`);
     }
     throw error;
   }
@@ -72,11 +73,12 @@ try {
     { email },
     {
       $set: { passwordHash, role: "admin", active: true, updatedAt: now },
-      $setOnInsert: { createdAt: now },
+      $setOnInsert: { id: "master", createdAt: now },
+      $unset: { senha: "" },
     },
     { upsert: true },
   );
-  console.log("Conta administrativa configurada no MongoDB. Nenhuma senha em texto puro foi gravada.");
+  console.log(`Conta administrativa configurada em ${adminDatabaseName}.${usersCollectionName}. Hash salvo e campo senha removido.`);
 } catch (error) {
   console.error(error instanceof Error ? error.message : "Não foi possível configurar a conta administrativa.");
   process.exitCode = 1;

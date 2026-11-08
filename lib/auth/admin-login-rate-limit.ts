@@ -1,7 +1,7 @@
 import "server-only";
 import { createHmac } from "node:crypto";
 import type { Collection, Document } from "mongodb";
-import { getMongoDb } from "@/lib/mongodb";
+import { getAdminMongoDb } from "@/lib/mongodb";
 
 type LoginAttempt = Document & { _id: string; attempts: number; expiresAt: Date };
 const WINDOW_MS = 15 * 60 * 1000;
@@ -14,7 +14,7 @@ function hashIdentifier(value: string): string {
 }
 
 async function attemptsCollection(): Promise<Collection<LoginAttempt>> {
-  const collection = (await getMongoDb()).collection<LoginAttempt>("admin_login_attempts");
+  const collection = (await getAdminMongoDb()).collection<LoginAttempt>("admin_login_attempts");
   indexPromise ??= collection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }).catch((error) => {
     indexPromise = undefined;
     throw error;

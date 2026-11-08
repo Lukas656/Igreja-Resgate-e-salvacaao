@@ -27,3 +27,9 @@ export async function getMongoDb(): Promise<Db> {
   const databaseName = process.env.MONGODB_DB_NAME?.trim();
   return databaseName ? client.db(databaseName) : client.db();
 }
+
+export async function getAdminMongoDb(): Promise<Db> {
+  const client = await getMongoClient();
+  const databaseName = process.env.ADMIN_DB_NAME?.trim() || "auth";
+  return client.db(databaseName);
+}

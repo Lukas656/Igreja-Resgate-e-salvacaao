@@ -3,7 +3,7 @@ import { isIP } from "node:net";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getMongoDb } from "@/lib/mongodb";
+import { getAdminMongoDb } from "@/lib/mongodb";
 import {
   createAdminSessionToken,
   getAdminEmailAllowlist,
@@ -81,9 +81,10 @@ export async function POST(request: NextRequest) {
       return noStore(response);
     }
 
-    const db = await getMongoDb();
+    const db = await getAdminMongoDb();
+    const usersCollection = process.env.ADMIN_USERS_COLLECTION?.trim() || "auth";
     const user = email === allowedEmail
-      ? await db.collection<AdminUser>("admin_users").findOne({ email })
+      ? await db.collection<AdminUser>(usersCollection).findOne({ email })
       : null;
     const passwordHash = user && /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(user.passwordHash)
       ? user.passwordHash
