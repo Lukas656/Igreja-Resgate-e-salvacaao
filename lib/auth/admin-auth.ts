@@ -4,20 +4,19 @@ import { cookies } from "next/headers";
 
 export type AdminSession = { email: string; name: string; csrfToken: string };
 
-const SESSION_COOKIE = "webdev_app_session";
+const SESSION_COOKIE = "resgate_admin_session";
 const SESSION_MAX_AGE = 8 * 60 * 60;
+const SESSION_ISSUER = "resgate-admin";
+const SESSION_AUDIENCE = "resgate-admin-panel";
 
 function normalizedEmail(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : null;
 }
 
 function secretKey(): Uint8Array | null {
-  const secret = process.env.MANUS_JWT_SECRET;
-  return secret ? new TextEncoder().encode(secret) : null;
-}
-
-function projectId(): string | null {
-  return process.env.MANUS_PROJECT_ID || null;
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret || Buffer.byteLength(secret, "utf8") < 32) return null;
+  return new TextEncoder().encode(secret);
 }
 
 export function getAdminEmailAllowlist(): string | null {
@@ -29,28 +28,21 @@ export function makeCsrfToken(): string {
 }
 
 export async function createAdminSessionToken(input: {
-  openId: string;
   email: string;
   name: string;
   csrfToken: string;
 }): Promise<string> {
   const key = secretKey();
-  const appId = projectId();
   const email = normalizedEmail(input.email);
-  if (!key || !appId || !email || !input.openId || !input.csrfToken) {
+  if (!key || !email || email !== getAdminEmailAllowlist() || !input.csrfToken) {
     throw new Error("Authentication unavailable");
   }
   const now = Math.floor(Date.now() / 1000);
-  return new SignJWT({
-    appId,
-    openId: input.openId,
-    email,
-    name: input.name,
-    role: "admin",
-    csrfToken: input.csrfToken,
-  })
+  return new SignJWT({ email, name: input.name, role: "admin", csrfToken: input.csrfToken })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-    .setSubject(input.openId)
+    .setIssuer(SESSION_ISSUER)
+    .setAudience(SESSION_AUDIENCE)
+    .setSubject(email)
     .setIssuedAt(now)
     .setExpirationTime(now + SESSION_MAX_AGE)
     .sign(key);
@@ -60,19 +52,20 @@ export async function getAdminSession(): Promise<AdminSession | null> {
   const cookie = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!cookie) return null;
   const key = secretKey();
-  const appId = projectId();
   const allowlist = getAdminEmailAllowlist();
-  if (!key || !appId || !allowlist) return null;
+  if (!key || !allowlist) return null;
   try {
-    const { payload, protectedHeader } = await jwtVerify(cookie, key, { algorithms: ["HS256"] });
+    const { payload, protectedHeader } = await jwtVerify(cookie, key, {
+      algorithms: ["HS256"],
+      issuer: SESSION_ISSUER,
+      audience: SESSION_AUDIENCE,
+    });
     const email = normalizedEmail(payload.email);
     if (
       protectedHeader.alg !== "HS256" ||
-      payload.appId !== appId ||
       payload.role !== "admin" ||
       !email || email !== allowlist ||
-      typeof payload.openId !== "string" || !payload.openId ||
-      payload.sub !== payload.openId ||
+      payload.sub !== email ||
       typeof payload.name !== "string" ||
       typeof payload.csrfToken !== "string" || !payload.csrfToken
     ) return null;
@@ -94,6 +87,16 @@ export function getAdminSessionCookieName(): string {
   return SESSION_COOKIE;
 }
 
-export function oauthStateNonce(): string {
-  return randomBytes(32).toString("base64url");
+export function getAdminSessionCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  };
+}
+
+export function getClearedAdminSessionCookieOptions() {
+  return { ...getAdminSessionCookieOptions(), maxAge: 0 };
 }

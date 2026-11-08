@@ -350,3 +350,47 @@ button { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Acesso administrativo */
+.admin-auth-page {
+  min-height: 100svh; display: grid; place-items: center; padding: 2rem 1rem;
+  background: radial-gradient(ellipse at 50% 5%, rgba(8, 75, 155, .35), transparent 48%),
+    radial-gradient(ellipse at 100% 100%, rgba(8, 123, 250, .12), transparent 38%), #061638;
+}
+.admin-auth-card {
+  width: min(100%, 460px); padding: clamp(1.6rem, 6vw, 3rem); border: 1px solid rgba(160, 207, 255, .18);
+  border-radius: 28px; background: linear-gradient(145deg, rgba(13, 42, 91, .88), rgba(5, 20, 49, .94));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .35), inset 0 1px rgba(255, 255, 255, .04);
+}
+.admin-auth-mark {
+  display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 1.5rem;
+  border: 1px solid rgba(25, 185, 255, .3); border-radius: 18px; color: #8ce0ff;
+  background: rgba(8, 123, 250, .14); box-shadow: 0 0 32px rgba(25, 185, 255, .12);
+}
+.admin-eyebrow { color: #83d8ff; font-size: .68rem; font-weight: 800; letter-spacing: .19em; text-transform: uppercase; }
+.admin-auth-card h1 { margin: .8rem 0 .65rem; color: #f7faff; font-size: clamp(1.8rem, 7vw, 2.35rem); line-height: 1.12; letter-spacing: -.04em; }
+.admin-auth-card > p:not(.admin-security-note) { margin: 0; color: #aebbd2; font-size: .88rem; line-height: 1.75; }
+.admin-login-form { display: grid; gap: .65rem; margin-top: 1.7rem; }
+.admin-login-label { margin-top: .3rem; color: #d5e5fa; font-size: .76rem; font-weight: 750; }
+.admin-login-input {
+  width: 100%; min-height: 48px; padding: .7rem .85rem; border: 1px solid rgba(175, 205, 246, .2);
+  border-radius: 12px; outline: none; color: #f6f9ff; background: rgba(3, 15, 39, .65);
+  font: inherit; font-size: .9rem; transition: border-color .18s ease, box-shadow .18s ease;
+}
+.admin-login-input:focus { border-color: #19b9ff; box-shadow: 0 0 0 3px rgba(25, 185, 255, .15); }
+.admin-login-input:disabled { opacity: .65; }
+.admin-login-submit {
+  display: flex; min-height: 50px; align-items: center; justify-content: center; gap: .65rem; margin-top: .65rem;
+  padding: .8rem 1rem; border: 0; border-radius: 999px; color: #03132e;
+  background: linear-gradient(110deg, #64d5ff, #19b9ff 48%, #087bfa); box-shadow: 0 12px 36px rgba(8, 123, 250, .24);
+  font: inherit; font-size: .8rem; font-weight: 850; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.admin-login-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 42px rgba(8, 123, 250, .38); }
+.admin-login-submit:disabled { cursor: wait; opacity: .72; }
+.admin-login-submit:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.admin-login-spinner { width: 16px; height: 16px; border: 2px solid rgba(3, 19, 46, .35); border-top-color: #03132e; border-radius: 50%; animation: admin-spin .7s linear infinite; }
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+.admin-alert-error { margin: .35rem 0 0; padding: .75rem .9rem; border: 1px solid rgba(255, 131, 143, .28); border-radius: 12px; color: #ffd4d8; background: rgba(112, 25, 45, .24); font-size: .77rem; line-height: 1.55; }
+.admin-security-note { margin: 1.2rem 0 0; color: #7f94b4; font-size: .68rem; text-align: center; }
+@media (max-width: 480px) { .admin-auth-card { padding: 1.5rem 1.2rem; border-radius: 22px; } }

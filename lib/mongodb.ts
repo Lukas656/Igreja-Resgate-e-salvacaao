@@ -1,5 +1,5 @@
 import "server-only";
-import { MongoClient } from "mongodb";
+import { MongoClient, type Db } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 function requiredUri(): string { if (!uri) throw new Error("DATABASE_UNAVAILABLE"); return uri; }
@@ -20,4 +20,10 @@ export function getMongoClient(): Promise<MongoClient> {
     });
   }
   return globalMongo.__resgateMongoPromise;
+}
+
+export async function getMongoDb(): Promise<Db> {
+  const client = await getMongoClient();
+  const databaseName = process.env.MONGODB_DB_NAME?.trim();
+  return databaseName ? client.db(databaseName) : client.db();
 }

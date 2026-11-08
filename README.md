@@ -45,3 +45,14 @@ A origem de produção pode ser configurada com `NEXT_PUBLIC_SITE_URL` (HTTPS). 
 - `lib/config.ts`: identidade e dados ajustáveis do ministério.
 - `lib/youtube-types.ts`: tipos compartilhados de vídeos/categorias.
 - `public/`: favicon e manifesto estático das rotas.
+
+
+## Painel administrativo: autenticação por MongoDB
+
+O acesso a `/admin` usa e-mail/senha validados na coleção `admin_users` do mesmo MongoDB Atlas do conteúdo. Não existe rota de cadastro público. A variável `ADMIN_EMAIL` limita o login à conta administrativa autorizada; o documento no banco também precisa estar ativo (`active: true`) e possuir `role: "admin"`.
+
+Configure `MONGODB_URI`, opcionalmente `MONGODB_DB_NAME` (use o mesmo banco em que `site_content` está gravado), `ADMIN_EMAIL` e `ADMIN_SESSION_SECRET` no `.env.local` e no ambiente de produção da Vercel. Gere a chave de sessão com `openssl rand -base64 48`; ela deve ter pelo menos 32 bytes. Não compartilhe nem versione os valores reais. As antigas variáveis `MANUS_PROJECT_ID`, `MANUS_OAUTH_PORTAL_URL`, `MANUS_OAUTH_API_URL` e `MANUS_JWT_SECRET` não são mais usadas e podem ser removidas do ambiente da Vercel.
+
+Para criar ou redefinir a única conta autorizada, execute `pnpm admin:seed` em um terminal interativo com `MONGODB_URI` e `ADMIN_EMAIL` carregados. O comando pede a senha sem exibi-la, pede confirmação e grava apenas o hash bcrypt (fator 12) na coleção `admin_users`. A conta é criada/atualizada somente para o endereço definido em `ADMIN_EMAIL`. Use senha única e longa; como a senha anteriormente compartilhada na conversa não deve ser considerada confidencial, prefira definir outra antes de liberar o painel.
+
+O login aplica limite de tentativas por e-mail e endereço de origem, com janela de 15 minutos armazenada em `admin_login_attempts`; o token de sessão é assinado com `ADMIN_SESSION_SECRET`, usa cookie `HttpOnly`, `SameSite=Lax` e `Secure` em produção, expira após 8 horas e mantém validação CSRF nas operações administrativas. A conexão ao Atlas deve permitir o IP de saída do ambiente em que o seed for executado e da aplicação publicada.

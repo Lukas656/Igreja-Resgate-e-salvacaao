@@ -41,7 +41,7 @@ export function AdminPanel({ session, initialSnapshot }: AdminPanelProps) {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      setError(response.status === 503 ? "O servidor não conseguiu acessar o MongoDB Atlas. Confirme Network Access, credenciais e rede do servidor." : response.status === 401 ? "Sua sessão expirou. Entre novamente com a conta Manus autorizada." : response.status === 400 ? "Há um campo inválido. Revise os dados da seção e tente salvar novamente." : "Não foi possível salvar o rascunho.");
+      setError(response.status === 503 ? "O servidor não conseguiu acessar o MongoDB Atlas. Confirme Network Access, credenciais e rede do servidor." : response.status === 401 ? "Sua sessão administrativa expirou. Entre novamente." : response.status === 400 ? "Há um campo inválido. Revise os dados da seção e tente salvar novamente." : "Não foi possível salvar o rascunho.");
       setNotice("");
       return false;
     }
@@ -65,7 +65,7 @@ export function AdminPanel({ session, initialSnapshot }: AdminPanelProps) {
       const response = await fetch("/api/admin/content/publish", { method: "POST", credentials: "same-origin", headers: { "x-csrf-token": session.csrfToken } });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError(response.status === 503 ? "O Atlas ficou indisponível antes da publicação. Seu rascunho foi salvo; tente publicar novamente." : response.status === 401 ? "Sua sessão expirou. Entre novamente com a conta Manus autorizada." : "Não foi possível publicar o conteúdo.");
+        setError(response.status === 503 ? "O Atlas ficou indisponível antes da publicação. Seu rascunho foi salvo; tente publicar novamente." : response.status === 401 ? "Sua sessão administrativa expirou. Entre novamente." : "Não foi possível publicar o conteúdo.");
         return;
       }
       receiveSnapshot(data as ClientSnapshot);
@@ -76,8 +76,14 @@ export function AdminPanel({ session, initialSnapshot }: AdminPanelProps) {
 
   async function logout() {
     setBusy(true);
-    try { await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", headers: { "x-csrf-token": session.csrfToken } }); }
-    finally { window.location.assign("/admin"); }
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin", headers: { "x-csrf-token": session.csrfToken } });
+      if (!response.ok) { setError("Não foi possível encerrar a sessão agora. Tente novamente."); setBusy(false); return; }
+      window.location.assign("/admin");
+    } catch {
+      setError("Falha de comunicação ao sair. Sua sessão continua ativa; tente novamente.");
+      setBusy(false);
+    }
   }
 
   return <main className="admin-app">

@@ -1,6 +1,6 @@
 import "server-only";
 import type { Collection, Document } from "mongodb";
-import { getMongoClient } from "@/lib/mongodb";
+import { getMongoDb } from "@/lib/mongodb";
 import { defaultSiteContent, SiteContentSchema, type SiteContent } from "@/lib/site-content-model";
 
 type ContentRecord = Document & {
@@ -14,8 +14,8 @@ export class DatabaseUnavailableError extends Error {
 const genericDbLog = () => console.error("[site-content] Database unavailable");
 async function collection(): Promise<Collection<ContentRecord>> {
   try {
-    const client = await getMongoClient();
-    return client.db().collection<ContentRecord>("site_content");
+    const db = await getMongoDb();
+    return db.collection<ContentRecord>("site_content");
   } catch { throw new DatabaseUnavailableError(); }
 }
 export async function ensureSeeded(): Promise<void> {
